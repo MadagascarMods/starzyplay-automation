@@ -59,3 +59,9 @@
 - [x] Testar botão "Usar Códigos" para aplicar códigos pendentes (funciona, mas API do StarzyPlay tem limite)
 - [x] Testar botão "Exportar TXT" e verificar formato (415 contas exportadas!)
 - [x] Testar criação de novas contas com "Iniciar Loop" (funcionando - criou 7 contas)
+
+## Deploy
+
+- [x] Criar repositório GitHub: https://github.com/MadagascarMods/starzyplay-automation
+- [x] Adicionar render.yaml para deploy na Render.com
+- [ ] Configurar variáveis de ambiente na Render.com (DATABASE_URL, JWT_SECRET)
