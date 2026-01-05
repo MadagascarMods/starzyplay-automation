@@ -53,3 +53,9 @@
 - [x] Criar script para importar contas do arquivo TXT para o banco de dados
 - [x] Importar todas as contas criadas pelo usuário (136 contas)
 - [x] Adicionar funcionalidade de exportar contas para TXT no site
+
+## Testes Solicitados
+
+- [x] Testar botão "Usar Códigos" para aplicar códigos pendentes (funciona, mas API do StarzyPlay tem limite)
+- [x] Testar botão "Exportar TXT" e verificar formato (415 contas exportadas!)
+- [x] Testar criação de novas contas com "Iniciar Loop" (funcionando - criou 7 contas)
