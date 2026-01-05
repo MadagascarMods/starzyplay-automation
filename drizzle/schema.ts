@@ -1,17 +1,10 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
- * Extend this file with additional tables as your product grows.
- * Columns use camelCase to match both database fields and generated types.
  */
 export const users = mysqlTable("users", {
-  /**
-   * Surrogate primary key. Auto-incremented numeric value managed by the database.
-   * Use this for relations between tables.
-   */
   id: int("id").autoincrement().primaryKey(),
-  /** Manus OAuth identifier (openId) returned from the OAuth callback. Unique per user. */
   openId: varchar("openId", { length: 64 }).notNull().unique(),
   name: text("name"),
   email: varchar("email", { length: 320 }),
@@ -25,4 +18,54 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+/**
+ * Tabela para armazenar contas criadas no StarzyPlay
+ */
+export const createdAccounts = mysqlTable("created_accounts", {
+  id: int("id").autoincrement().primaryKey(),
+  referenceCode: varchar("referenceCode", { length: 10 }).notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  username: varchar("username", { length: 100 }).notNull(),
+  password: varchar("password", { length: 100 }).notNull(),
+  age: int("age").notNull(),
+  gender: varchar("gender", { length: 20 }).notNull(),
+  inviteCodeUsed: varchar("inviteCodeUsed", { length: 10 }),
+  emailVerified: boolean("emailVerified").default(false).notNull(),
+  loginSuccess: boolean("loginSuccess").default(false).notNull(),
+  codeApplied: boolean("codeApplied").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type CreatedAccount = typeof createdAccounts.$inferSelect;
+export type InsertCreatedAccount = typeof createdAccounts.$inferInsert;
+
+/**
+ * Tabela para armazenar logs de operações
+ */
+export const operationLogs = mysqlTable("operation_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  type: mysqlEnum("type", ["info", "success", "error", "warning"]).default("info").notNull(),
+  operation: varchar("operation", { length: 50 }).notNull(),
+  message: text("message").notNull(),
+  details: text("details"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type OperationLog = typeof operationLogs.$inferSelect;
+export type InsertOperationLog = typeof operationLogs.$inferInsert;
+
+/**
+ * Tabela para armazenar estatísticas
+ */
+export const statistics = mysqlTable("statistics", {
+  id: int("id").autoincrement().primaryKey(),
+  accountsCreated: int("accountsCreated").default(0).notNull(),
+  codesAppliedSuccess: int("codesAppliedSuccess").default(0).notNull(),
+  codesAppliedFailed: int("codesAppliedFailed").default(0).notNull(),
+  codesAlreadyUsed: int("codesAlreadyUsed").default(0).notNull(),
+  starsEarned: int("starsEarned").default(0).notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Statistics = typeof statistics.$inferSelect;
+export type InsertStatistics = typeof statistics.$inferInsert;
