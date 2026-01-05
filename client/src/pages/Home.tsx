@@ -22,7 +22,9 @@ import {
   Loader2,
   Trash2,
   Copy,
-  Zap
+  Zap,
+  Download,
+  Upload
 } from "lucide-react";
 
 export default function Home() {
@@ -154,6 +156,31 @@ export default function Home() {
   const copyCode = (code: string) => {
     navigator.clipboard.writeText(code);
     toast.success(`Código ${code} copiado!`);
+  };
+  
+  const handleExportTxt = async () => {
+    try {
+      const response = await fetch('/api/trpc/accounts.exportTxt');
+      const data = await response.json();
+      
+      if (data?.result?.data?.json?.content) {
+        const content = data.result.data.json.content;
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `codigos_referencia_${new Date().toISOString().split('T')[0]}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        toast.success(`${data.result.data.json.count} contas exportadas!`);
+      } else {
+        toast.error('Erro ao exportar');
+      }
+    } catch (error: any) {
+      toast.error(`Erro: ${error.message}`);
+    }
   };
   
   const getLogIcon = (type: string) => {
@@ -472,10 +499,20 @@ export default function Home() {
             {/* Accounts Card */}
             <Card className="bg-card border-border">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Users className="h-5 w-5 text-primary" />
-                  Contas Criadas ({accounts?.length || 0})
-                </CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Users className="h-5 w-5 text-primary" />
+                    Contas Criadas ({accounts?.length || 0})
+                  </CardTitle>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handleExportTxt}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Exportar TXT
+                  </Button>
+                </div>
                 <CardDescription>
                   Códigos de referência das contas criadas
                 </CardDescription>

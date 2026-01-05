@@ -47,3 +47,9 @@
 - [x] Testar login com conta thayserodrigo12@gmail.com
 - [x] Testar aplicação de códigos de referência
 - [x] Garantir que criação de conta funciona igual ao Python
+
+## Importação de Dados
+
+- [x] Criar script para importar contas do arquivo TXT para o banco de dados
+- [x] Importar todas as contas criadas pelo usuário (136 contas)
+- [x] Adicionar funcionalidade de exportar contas para TXT no site

@@ -342,6 +342,52 @@ export const appRouter = router({
   // ==========================================
 
   accounts: router({
+    // Import accounts from JSON
+    importBulk: publicProcedure
+      .input(z.object({
+        accounts: z.array(z.object({
+          email: z.string(),
+          username: z.string().optional(),
+          password: z.string().optional(),
+          age: z.number().optional(),
+          gender: z.string().optional(),
+          referenceCode: z.string(),
+          inviteCodeUsed: z.string().optional(),
+          emailVerified: z.boolean().optional(),
+        }))
+      }))
+      .mutation(async ({ input }) => {
+        const { accounts } = input;
+        let imported = 0;
+        let skipped = 0;
+        
+        for (const acc of accounts) {
+          try {
+            await saveCreatedAccount({
+              email: acc.email,
+              username: acc.username || '',
+              password: acc.password || '',
+              age: acc.age || 18,
+              gender: acc.gender || 'masculino',
+              referenceCode: acc.referenceCode,
+              inviteCodeUsed: acc.inviteCodeUsed || '',
+              emailVerified: acc.emailVerified || false,
+            });
+            imported++;
+          } catch (error) {
+            skipped++;
+          }
+        }
+        
+        await addLog({
+          type: "success",
+          operation: "import",
+          message: `Importa\u00e7\u00e3o conclu\u00edda: ${imported} contas importadas, ${skipped} ignoradas`,
+        });
+        
+        return { success: true, imported, skipped };
+      }),
+
     list: publicProcedure
       .input(z.object({ limit: z.number().optional().default(100) }).optional())
       .query(async ({ input }) => {
@@ -349,8 +395,38 @@ export const appRouter = router({
         return await getCreatedAccounts(limit);
       }),
 
-    unused: publicProcedure.query(async () => {
-      return await getUnusedCodes();
+    // Export accounts to TXT format
+    exportTxt: publicProcedure
+      .query(async () => {
+        const accounts = await getCreatedAccounts(10000);
+        
+        let txt = `================================================================================
+CÓDIGOS DE REFERÊNCIA DAS CONTAS CRIADAS NO STARZYPLAY
+================================================================================
+`;
+        
+        for (const acc of accounts) {
+          const date = acc.createdAt ? new Date(acc.createdAt).toISOString().replace('T', ' ').substring(0, 19) : 'N/A';
+          txt += `
+Data/Hora: ${date}
+Código de Referência: ${acc.referenceCode}
+Email: ${acc.email}
+Nome: ${acc.username}
+Senha: ${acc.password}
+Idade: ${acc.age}
+Gênero: ${acc.gender}
+Código usado no registro: ${acc.inviteCodeUsed}
+Email verificado: ${acc.emailVerified ? 'Sim' : 'Não'}
+Código aplicado: ${acc.codeApplied ? 'Sim' : 'Não'}
+--------------------------------------------------------------------------------
+`;
+        }
+        
+        return { content: txt, count: accounts.length };
+      }),
+
+    unused: publicProcedure
+      .query(async () => {return await getUnusedCodes();
     }),
   }),
 
