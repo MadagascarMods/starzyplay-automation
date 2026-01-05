@@ -22,7 +22,8 @@ import {
 } from "./services/tempmail";
 import { 
   createNewAccount, 
-  applyInviteCode 
+  applyInviteCode,
+  testLogin
 } from "./services/starzyplay";
 
 export const appRouter = router({
@@ -202,6 +203,50 @@ export const appRouter = router({
           await addLog({
             type: "error",
             operation: "apply_code",
+            message: `Erro: ${error.message}`,
+          });
+          return { success: false, error: error.message };
+        }
+      }),
+
+    // Test login
+    testLogin: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        password: z.string().min(1),
+      }))
+      .mutation(async ({ input }) => {
+        const { email, password } = input;
+
+        await addLog({
+          type: "info",
+          operation: "test_login",
+          message: `Testando login com ${email}...`,
+        });
+
+        try {
+          const result = await testLogin(email, password);
+
+          if (result.success) {
+            await addLog({
+              type: "success",
+              operation: "test_login",
+              message: `Login bem-sucedido! Usuário: ${result.user?.name}`,
+              details: JSON.stringify(result.user),
+            });
+          } else {
+            await addLog({
+              type: "error",
+              operation: "test_login",
+              message: `Falha no login: ${result.error}`,
+            });
+          }
+
+          return result;
+        } catch (error: any) {
+          await addLog({
+            type: "error",
+            operation: "test_login",
             message: `Erro: ${error.message}`,
           });
           return { success: false, error: error.message };

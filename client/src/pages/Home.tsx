@@ -46,6 +46,7 @@ export default function Home() {
   // Mutations
   const createAccountMutation = trpc.automation.createAccount.useMutation();
   const applyAllCodesMutation = trpc.automation.applyAllCodes.useMutation();
+  const testLoginMutation = trpc.automation.testLogin.useMutation();
   const clearLogsMutation = trpc.logs.clear.useMutation();
   const resetStatsMutation = trpc.statistics.reset.useMutation();
   
@@ -326,6 +327,38 @@ export default function Home() {
                     <div className="p-3 rounded-lg bg-muted/50">
                       <div className="text-sm font-medium">Códigos Disponíveis</div>
                       <div className="text-2xl font-bold text-primary">{unusedCodes?.length || 0}</div>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline"
+                        className="flex-1"
+                        onClick={async () => {
+                          if (!refEmail || !refPassword) {
+                            toast.error("Digite email e senha");
+                            return;
+                          }
+                          try {
+                            const result = await testLoginMutation.mutateAsync({ email: refEmail, password: refPassword });
+                            if (result.success && 'user' in result) {
+                              toast.success(`Login OK! Usuário: ${result.user?.name}`);
+                            } else {
+                              toast.error(`Falha: ${result.error}`);
+                            }
+                            await refetchLogs();
+                          } catch (error: any) {
+                            toast.error(`Erro: ${error.message}`);
+                          }
+                        }}
+                        disabled={isRunning || !refEmail || !refPassword || testLoginMutation.isPending}
+                      >
+                        {testLoginMutation.isPending ? (
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        ) : (
+                          <CheckCircle className="h-4 w-4 mr-2" />
+                        )}
+                        Testar Login
+                      </Button>
                     </div>
                     
                     <Button 

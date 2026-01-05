@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE created_accounts SET codeApplied = 1 WHERE referenceCode IN ('7E5107', '94E28A', 'CCE8C6', '9D5DAF');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4QXudWdHRBAjrND.root --database VyhCBrkWSMeiHCpBaAc8Pr --execute UPDATE created_accounts SET codeApplied = 1 WHERE referenceCode IN ('7E5107', '94E28A', 'CCE8C6', '9D5DAF');",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 109
+}

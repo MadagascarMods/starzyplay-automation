@@ -38,3 +38,12 @@
 
 - [ ] Preparar repositório GitHub
 - [ ] Configurar para Render.com
+
+- [ ] Configurar para Render.com
+
+## Correções Solicitadas
+
+- [x] Corrigir integração com API do StarzyPlay para funcionar como código Python
+- [x] Testar login com conta thayserodrigo12@gmail.com
+- [x] Testar aplicação de códigos de referência
+- [x] Garantir que criação de conta funciona igual ao Python
