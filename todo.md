@@ -65,3 +65,8 @@
 - [x] Criar repositório GitHub: https://github.com/MadagascarMods/starzyplay-automation
 - [x] Adicionar render.yaml para deploy na Render.com
 - [ ] Configurar variáveis de ambiente na Render.com (DATABASE_URL, JWT_SECRET)
+
+
+## Bugs Reportados
+
+- [ ] Botão "Iniciar Loop" fica carregando infinitamente na Render.com
