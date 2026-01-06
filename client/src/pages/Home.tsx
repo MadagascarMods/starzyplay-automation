@@ -213,9 +213,11 @@ export default function Home() {
         <div className="container py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                <Zap className="h-6 w-6 text-primary" />
-              </div>
+              <img 
+                src="/logo.jpg" 
+                alt="MadagascarMods Logo" 
+                className="h-12 w-12 rounded-full object-cover border-2 border-primary/50"
+              />
               <div>
                 <h1 className="text-xl font-bold text-foreground">Automação StarzyPlay</h1>
                 <p className="text-sm text-muted-foreground">Dev. MadagascarMods</p>

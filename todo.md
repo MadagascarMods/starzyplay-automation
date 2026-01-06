@@ -77,3 +77,7 @@
 
 - [x] Comparar fluxo do código Python com o site para identificar diferença na contagem de convites
 - [x] Corrigir: aplicar código da nova conta na conta de referência após criar (igual ao Python)
+
+- [x] Importar 152 contas do arquivo TXT para o banco TiDB (total agora: 216 contas)
+
+- [ ] Adicionar logo do MadagascarMods ao header do site
