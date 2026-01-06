@@ -8,6 +8,7 @@ import {
   getCreatedAccounts, 
   getUnusedCodes, 
   markCodeAsApplied,
+  markCodeAsAppliedByCode,
   addLog,
   getLogs,
   clearLogs,
@@ -46,9 +47,11 @@ export const appRouter = router({
     createAccount: publicProcedure
       .input(z.object({
         inviteCode: z.string().min(1),
+        refEmail: z.string().email().optional(),
+        refPassword: z.string().min(1).optional(),
       }))
       .mutation(async ({ input }) => {
-        const { inviteCode } = input;
+        const { inviteCode, refEmail, refPassword } = input;
 
         // Log start
         await addLog({
@@ -133,6 +136,49 @@ export const appRouter = router({
                 loginSuccess: result.loginSuccess,
               }),
             });
+          }
+
+          // IMPORTANTE: Aplicar o código da nova conta na conta de referência
+          // Isso é o que faz ganhar as estrelas!
+          if (result.newInviteCode && refEmail && refPassword) {
+            await addLog({
+              type: "info",
+              operation: "create_account",
+              message: `Aplicando código ${result.newInviteCode} na conta de referência...`,
+            });
+
+            try {
+              const applyResult = await applyInviteCode(result.newInviteCode, refEmail, refPassword);
+              
+              if (applyResult.success) {
+                await markCodeAsAppliedByCode(result.newInviteCode);
+                await updateStatistics({ codesAppliedSuccess: 1 });
+                
+                await addLog({
+                  type: "success",
+                  operation: "create_account",
+                  message: `Código ${result.newInviteCode} aplicado na conta de referência! +20 estrelas`,
+                });
+              } else if (applyResult.alreadyUsed) {
+                await addLog({
+                  type: "warning",
+                  operation: "create_account",
+                  message: `Código ${result.newInviteCode} já foi usado anteriormente`,
+                });
+              } else {
+                await addLog({
+                  type: "error",
+                  operation: "create_account",
+                  message: `Falha ao aplicar código ${result.newInviteCode}: ${applyResult.error}`,
+                });
+              }
+            } catch (applyError: any) {
+              await addLog({
+                type: "error",
+                operation: "create_account",
+                message: `Erro ao aplicar código: ${applyError.message}`,
+              });
+            }
           }
 
           return { success: true, data: result };

@@ -78,6 +78,11 @@ export default function Home() {
       return;
     }
     
+    if (!refEmail || !refPassword) {
+      toast.error("Digite o email e senha da conta de referência para ganhar as estrelas");
+      return;
+    }
+    
     setIsRunning(true);
     setIsPaused(false);
     stopRef.current = false;
@@ -89,7 +94,7 @@ export default function Home() {
       }
       
       try {
-        await createAccountMutation.mutateAsync({ inviteCode });
+        await createAccountMutation.mutateAsync({ inviteCode, refEmail, refPassword });
         await refetchLogs();
         await refetchStats();
         await refetchAccounts();
@@ -307,11 +312,40 @@ export default function Home() {
                       </p>
                     </div>
                     
+                    <Separator className="my-2" />
+                    <p className="text-xs text-muted-foreground font-medium">
+                      Conta que vai receber as estrelas:
+                    </p>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="refEmailCreate">Email da Conta de Referência</Label>
+                      <Input
+                        id="refEmailCreate"
+                        type="email"
+                        placeholder="seu@email.com"
+                        value={refEmail}
+                        onChange={(e) => setRefEmail(e.target.value)}
+                        disabled={isRunning}
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="refPasswordCreate">Senha da Conta de Referência</Label>
+                      <Input
+                        id="refPasswordCreate"
+                        type="password"
+                        placeholder="••••••••"
+                        value={refPassword}
+                        onChange={(e) => setRefPassword(e.target.value)}
+                        disabled={isRunning}
+                      />
+                    </div>
+                    
                     <div className="flex gap-2">
                       <Button 
                         className="flex-1"
                         onClick={startCreateLoop}
-                        disabled={isRunning || !inviteCode}
+                        disabled={isRunning || !inviteCode || !refEmail || !refPassword}
                       >
                         {isRunning && activeTab === "create" ? (
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />

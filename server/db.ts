@@ -156,6 +156,22 @@ export async function markCodeAsApplied(id: number) {
   }
 }
 
+export async function markCodeAsAppliedByCode(referenceCode: string) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot update code: database not available");
+    return null;
+  }
+
+  try {
+    const result = await db.update(createdAccounts).set({ codeApplied: true }).where(eq(createdAccounts.referenceCode, referenceCode));
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to update code:", error);
+    throw error;
+  }
+}
+
 // ==========================================
 // FUNÇÕES PARA LOGS
 // ==========================================

@@ -69,4 +69,10 @@
 
 ## Bugs Reportados
 
-- [ ] Botão "Iniciar Loop" fica carregando infinitamente na Render.com
+- [x] Botão "Iniciar Loop" fica carregando infinitamente na Render.com (corrigido com novas APIs de email)
+
+- [ ] Site não está funcionando corretamente na Render - testar e corrigir
+
+- [ ] Verificar se código de convite está sendo usado corretamente no registro (amigos convidados não aumenta)
+
+- [ ] Comparar fluxo do código Python com o site para identificar diferença na contagem de convites
